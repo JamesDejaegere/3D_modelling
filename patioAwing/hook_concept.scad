@@ -6,26 +6,31 @@
 $fn = 96;
 
 // Algemene parameters
-thickness = 6;
-wall = 3;
+thickness = 16;
+reinforcmentThickness= 8;
+wall = 4;
+fingerHoleDiameter=20;
+
 
 // Buitencontour
 module outer_shape() {
-    hull() {
-        translate([0,0]) circle(r=38);
-        translate([92,2]) circle(r=28);
-        translate([35,48]) circle(r=24);
-    }
+    translate([4.6,6.3])
+        cube([6,wall, wall]);
+    translate([0,4])
+        cylinder(h=wall,r=4);
+    polygon(points=[
+        [0,0],
+        [17,0],
+        [17,4],
+        [24,8]
+        ]);
 }
 
 // Binnenuitsparing om gewicht te besparen
 module inner_cutout() {
     offset(r=-wall)
-    hull() {
-        translate([0,0]) circle(r=38);
-        translate([92,2]) circle(r=28);
-        translate([35,48]) circle(r=24);
-    }
+      outer_shape();
+  
 }
 
 // Haakopening bovenaan
@@ -56,14 +61,14 @@ module hook_cutout() {
 module reinforced_holes() {
     // links
     difference() {
-        translate([8,-2]) circle(r=14);
-        translate([8,-2]) circle(r=9);
+        translate([8,-2]) circle(r=fingerHoleDiameter);
+        translate([8,-2]) circle(r=fingerHoleDiameter-wall);
     }
 
     // rechts
     difference() {
-        translate([92,0]) circle(r=14);
-        translate([92,0]) circle(r=9);
+        translate([92,0]) circle(r=fingerHoleDiameter);
+        translate([92,0]) circle(r=fingerHoleDiameter-wall);
     }
 }
 
@@ -78,21 +83,23 @@ module top_boss() {
 
 // Hoofdmodel
 linear_extrude(height=thickness)
+outer_shape();
+
 difference() {
     union() {
         difference() {
             outer_shape();
-            inner_cutout();
+//            inner_cutout();
         }
-
-        reinforced_holes();
-        top_boss();
+//
+//        reinforced_holes();
+////        top_boss();
     }
-
-    // Doorlopende gaten
-    translate([8,-2]) circle(r=9);
-    translate([92,0]) circle(r=9);
-
-    // Haakopening
-    hook_cutout();
+//
+//    // Doorlopende gaten
+////    translate([8,-2]) circle(r=9);
+////    translate([92,0]) circle(r=9);
+//
+//    // Haakopening
+////    hook_cutout();
 }
